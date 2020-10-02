@@ -3,7 +3,6 @@ const Float = require('../models/float')
 const { notFound, unauthorized } = require('../lib/errorMessages')
 
 async function getFloatValue(req, res) {
-  console.log('heyyyyy')
   try {
     const value = await Float.find()
     res.status(200).json(value)
