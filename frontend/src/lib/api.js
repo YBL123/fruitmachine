@@ -9,3 +9,11 @@ export const getFloatValue = () => {
     console.log(error)
   }
 }
+
+export const updateFloatValue = floatId => {
+  try {
+    return axios.get(`${baseUrl}/value/${floatId}`)
+  } catch (error) {
+    console.log(error)
+  }
+}
