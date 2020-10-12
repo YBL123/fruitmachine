@@ -23,25 +23,19 @@ class Home extends React.Component {
     const data = await getFloatValue()
 
     let floatUpdate = data.data[0].value
+    console.log('float', floatUpdate)
     floatUpdate = floatUpdate + 5
-
-    this.setState({ float: floatUpdate })
+    console.log('float + 5', floatUpdate)
 
     const floatId = data.data[0]._id
-    console.log(floatId)
-    console.log(await updateFloatValue(floatId))
+    console.log('floatId', floatId)
+    console.log('state float', this.state.float)
+    const updatedFloat = await updateFloatValue(floatId)
+    console.log('updatedFloat', updatedFloat)
+    // console.log(await updateFloatValue(floatId))
+    this.setState({ float: updatedFloat })
 
-    console.log('beadasjdasd', this.state.float)
   }
-
-  // async componentDidMount() {
-  //   try {
-  //     this.incFloat()
-  //     console.log(this.state.float)
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
-  // }
 
   playOnClick = async event => {
     this.incFloat()

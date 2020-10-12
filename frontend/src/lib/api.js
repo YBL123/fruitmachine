@@ -10,10 +10,6 @@ export const getFloatValue = () => {
   }
 }
 
-export const updateFloatValue = floatId => {
-  try {
-    return axios.get(`${baseUrl}/value/${floatId}`)
-  } catch (error) {
-    console.log(error)
-  }
+export const updateFloatValue = (floatId) => {
+    return axios.put(`${baseUrl}/value/${floatId}`)
 }
