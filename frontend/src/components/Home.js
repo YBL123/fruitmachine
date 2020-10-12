@@ -19,26 +19,30 @@ class Home extends React.Component {
 
   }
 
-  incFloat = async () => {
-    const data = await getFloatValue()
+  increaseFloat = async () => {
 
-    let floatUpdate = data.data[0].value
-    console.log('float', floatUpdate)
-    floatUpdate = floatUpdate + 5
-    console.log('float + 5', floatUpdate)
+    //* getting all data
+    const data = await getFloatValue() 
 
     const floatId = data.data[0]._id
-    console.log('floatId', floatId)
-    console.log('state float', this.state.float)
-    const updatedFloat = await updateFloatValue(floatId)
-    console.log('updatedFloat', updatedFloat)
-    // console.log(await updateFloatValue(floatId))
-    this.setState({ float: updatedFloat })
+
+    //* getting single float value
+    let floatValue = await updateFloatValue(floatId)
+
+    let floatToUpdate
+
+    //* ternary asking if this.state.flaot is an object -> if true then floatToUpdate is assigned the backend data for the float value. OR ':' if float is not an object then we add 5 altering the frontend
+    typeof(this.state.float) === 'object' ? floatToUpdate = floatValue.data.value : floatToUpdate = this.state.float + 5
+
+    //* setting state and updating the backend data
+    this.setState({ float: floatToUpdate })
+    console.log('last one', this.state.float)
+    await updateFloatValue(floatId, floatToUpdate)
 
   }
 
   playOnClick = async event => {
-    this.incFloat()
+    this.increaseFloat()
     let randomSlot1 = this.shuffle(this.state.slot1)
     let randomSlot2 = this.shuffle(this.state.slot2)
     let randomSlot3 = this.shuffle(this.state.slot3)
@@ -52,7 +56,6 @@ class Home extends React.Component {
 
     this.setState({ result: finalResult })
   }
-
 
   render() {
 
