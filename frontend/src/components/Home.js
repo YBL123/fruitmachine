@@ -1,60 +1,82 @@
 import React from 'react'
 import { getFloatValue } from '../lib/api'
 import { updateFloatValue } from '../lib/api'
-// import Float from '../components/Float'
 
 class Home extends React.Component {
   state = {
     float: [],
-    slot1: ['black', 'white', 'green', 'yellow'],
-    slot2: ['black', 'white', 'green', 'yellow'],
-    slot3: ['black', 'white', 'green', 'yellow'],
-    slot4: ['black', 'white', 'green', 'yellow'],
-    result: []
+    result: ['black', 'white', 'green', 'yellow']
   }
 
 
   shuffle = (array) => {
-    return array[Math.floor(Math.random() * array.length)]
-
+    const slotOptions = ['black', 'white', 'green', 'yellow']
+    return slotOptions[Math.floor(Math.random() * slotOptions.length)]
   }
 
   increaseFloat = async () => {
 
     //* getting all data
-    const data = await getFloatValue() 
+    const data = await getFloatValue()
 
+    //* getting single float data
     const floatId = data.data[0]._id
-
-    //* getting single float value
     let floatValue = await updateFloatValue(floatId)
 
-    let floatToUpdate
-
     //* ternary asking if this.state.flaot is an object -> if true then floatToUpdate is assigned the backend data for the float value. OR ':' if float is not an object then we add 5 altering the frontend
-    typeof(this.state.float) === 'object' ? floatToUpdate = floatValue.data.value : floatToUpdate = this.state.float + 5
+    let floatToUpdate
+    typeof (this.state.float) === 'object' ? floatToUpdate = floatValue.data.value : floatToUpdate = this.state.float + 5
 
     //* setting state and updating the backend data
     this.setState({ float: floatToUpdate })
     console.log('last one', this.state.float)
     await updateFloatValue(floatId, floatToUpdate)
-
   }
 
   playOnClick = async event => {
     this.increaseFloat()
-    let randomSlot1 = this.shuffle(this.state.slot1)
-    let randomSlot2 = this.shuffle(this.state.slot2)
-    let randomSlot3 = this.shuffle(this.state.slot3)
-    let randomSlot4 = this.shuffle(this.state.slot4)
+    const finalRes = this.state.result.map(slot => this.shuffle())
+    this.setState({ result: finalRes })
+    
+    const allUnique = (arr) => {
+        //* creating object -> for looping array
+        let valuesSoFar = Object.create(null);
+        for (let i = 0; i < arr.length; ++i) {
+          //* individual array item
+          let value = arr[i];
 
-    let finalResult = this.state.result
+          //* Checking to see if value (array item) exists within the valuesSoFar object -> if it does then return false 
+          if (value in valuesSoFar) {
+            return false;
+          }
+          //* If value is unique then adding it to object -> equals true 
+          valuesSoFar[value] = true;
+        }
+        //* all values in object are unique so returning true
+        return true;
+    }
 
-    finalResult = [randomSlot1, randomSlot2, randomSlot3, randomSlot4]
+    const allSame = () => { return finalRes.every(item => item === finalRes[0]) }
 
-    console.log(finalResult)
-
-    this.setState({ result: finalResult })
+    const adjacentDuplicates = (arr) => {
+      let ref
+      let ans
+      for( let i = 0; i < arr.length; i++) {
+        if(ref === arr[i]) ans = true
+        ref = arr[i]
+      }
+      return ans
+    }
+    
+    if (allSame(finalRes)) {
+      console.log('You win the jackpot!')
+    } else if (adjacentDuplicates(finalRes)) {
+      console.log('You win 5 times the cost')
+    } else if (allUnique(finalRes)) {
+      console.log('You win half the Jackpot!')
+    } else {
+      console.log('Sorry try again')
+    }
   }
 
   render() {
