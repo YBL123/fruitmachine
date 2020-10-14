@@ -71,7 +71,7 @@ class Home extends React.Component {
     if (allSame(finalRes)) {
       console.log('You win the jackpot!')
     } else if (adjacentDuplicates(finalRes)) {
-      console.log('You win 5 times the cost')
+      console.log('You win 5 times the cost') //! NEED TO FIX: needs to be only 2 adjacent so not if theres 3 in a row
     } else if (allUnique(finalRes)) {
       console.log('You win half the Jackpot!')
     } else {
