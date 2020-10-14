@@ -37,23 +37,23 @@ class Home extends React.Component {
     this.increaseFloat()
     const finalRes = this.state.result.map(slot => this.shuffle())
     this.setState({ result: finalRes })
-    
-    const allUnique = (arr) => {
-        //* creating object -> for looping array
-        let valuesSoFar = Object.create(null);
-        for (let i = 0; i < arr.length; ++i) {
-          //* individual array item
-          let value = arr[i];
 
-          //* Checking to see if value (array item) exists within the valuesSoFar object -> if it does then return false 
-          if (value in valuesSoFar) {
-            return false;
-          }
-          //* If value is unique then adding it to object -> equals true 
-          valuesSoFar[value] = true;
+    const allUnique = (arr) => {
+      //* creating object -> for looping array
+      let valuesSoFar = Object.create(null);
+      for (let i = 0; i < arr.length; ++i) {
+        //* individual array item
+        let value = arr[i];
+
+        //* Checking to see if value (array item) exists within the valuesSoFar object -> if it does then return false 
+        if (value in valuesSoFar) {
+          return false;
         }
-        //* all values in object are unique so returning true
-        return true;
+        //* If value is unique then adding it to object -> equals true 
+        valuesSoFar[value] = true;
+      }
+      //* all values in object are unique so returning true
+      return true;
     }
 
     const allSame = () => { return finalRes.every(item => item === finalRes[0]) }
@@ -61,13 +61,13 @@ class Home extends React.Component {
     const adjacentDuplicates = (arr) => {
       let ref
       let ans
-      for( let i = 0; i < arr.length; i++) {
-        if(ref === arr[i]) ans = true
+      for (let i = 0; i < arr.length; i++) {
+        if (ref === arr[i]) ans = true
         ref = arr[i]
       }
       return ans
     }
-    
+
     if (allSame(finalRes)) {
       console.log('You win the jackpot!')
     } else if (adjacentDuplicates(finalRes)) {
@@ -82,15 +82,17 @@ class Home extends React.Component {
   render() {
 
     return (
-      <section>
-        <div>
-          <h1>FruitMachine</h1>
-          <button onClick={this.playOnClick}>Play</button>
+      <section className="page-wrap">
+        <div className="title-wrapper">
+          <h1 className="title">FRUITE MACHINE</h1>
         </div>
-        <div>
+        <div className="slots-play-button-wrapper">
+          <div className="slots-wrapper">
           {this.state.result.map((slot, index) => (
-            <h1 key={index}>{slot}</h1>
+            <h1 className="slots" key={index}>{slot}</h1>
           ))}
+          </div>
+          <button className="play-button" onClick={this.playOnClick}>Play</button>
         </div>
       </section >
     )
