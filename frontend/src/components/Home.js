@@ -4,18 +4,25 @@ import { updateFloatValue } from '../lib/api'
 
 class Home extends React.Component {
   state = {
-    float: [],
+    float: 500,
+    message: '',
     result: ['black', 'white', 'green', 'yellow']
   }
 
+  async componentDidMount() {
+    try {
+      this.updateFloat(500)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   shuffle = (array) => {
     const slotOptions = ['black', 'white', 'green', 'yellow']
     return slotOptions[Math.floor(Math.random() * slotOptions.length)]
   }
 
-  increaseFloat = async () => {
-
+  updateFloat = async (num) => {
     //* getting all data
     const data = await getFloatValue()
 
@@ -23,15 +30,12 @@ class Home extends React.Component {
     const floatId = data.data[0]._id
     let floatValue = await updateFloatValue(floatId)
 
-    //* ternary asking if this.state.flaot is an object -> if true then floatToUpdate is assigned the backend data for the float value. OR ':' if float is not an object then we add 5 altering the frontend
-    let floatToUpdate
-    typeof (this.state.float) === 'object' ? floatToUpdate = floatValue.data.value : floatToUpdate = this.state.float + 5
-
-    //* setting state and updating the backend data
-    this.setState({ float: floatToUpdate })
-    console.log('last one', this.state.float)
-    await updateFloatValue(floatId, floatToUpdate)
+    // * update state and backend
+    this.setState({ float: num })
+    await updateFloatValue(floatId, num)
   }
+
+  increaseFloat = () => { this.updateFloat(this.state.float + 5) }
 
   playOnClick = async event => {
     this.increaseFloat()
@@ -46,9 +50,8 @@ class Home extends React.Component {
         let value = arr[i];
 
         //* Checking to see if value (array item) exists within the valuesSoFar object -> if it does then return false 
-        if (value in valuesSoFar) {
-          return false;
-        }
+        if (value in valuesSoFar) return false;
+        
         //* If value is unique then adding it to object -> equals true 
         valuesSoFar[value] = true;
       }
@@ -68,14 +71,18 @@ class Home extends React.Component {
       return ans
     }
 
+    //* win messages + float decrease
     if (allSame(finalRes)) {
-      console.log('You win the jackpot!')
+      this.setState({ message: `You win the jackpot of ${this.state.float}!` })
+      this.updateFloat(0)
     } else if (adjacentDuplicates(finalRes)) {
-      console.log('You win 5 times the cost') //! NEED TO FIX: needs to be only 2 adjacent so not if theres 3 in a row
+      this.setState({ message: `You win ${this.state.float >= 25 ? this.state.float - 25 : this.state.float}` })
+      this.updateFloat(this.state.float >= 25 ? this.state.float - 25 : 0)
     } else if (allUnique(finalRes)) {
-      console.log('You win half the Jackpot!')
+      this.setState({ message: `You win ${Math.floor(this.state.float / 2)}!` })
+      this.updateFloat(Math.ceil(this.state.float / 2))
     } else {
-      console.log('Sorry try again')
+      this.setState({ message: 'Sorry try again' })
     }
   }
 
@@ -85,13 +92,15 @@ class Home extends React.Component {
       <section className="page-wrap">
         <div className="title-wrapper">
           <h1 className="title">FRUITE MACHINE</h1>
+          <h2>Jackpot: {this.state.float}</h2>
         </div>
         <div className="slots-play-button-wrapper">
           <div className="slots-wrapper">
-          {this.state.result.map((slot, index) => (
-            <h1 className="slots" key={index}>{slot}</h1>
-          ))}
+            {this.state.result.map((slot, index) => (
+              <h1 className="slots" key={index}>{slot}</h1>
+            ))}
           </div>
+          <p>{this.state.message}</p>
           <button className="play-button" onClick={this.playOnClick}>Play</button>
         </div>
       </section >
